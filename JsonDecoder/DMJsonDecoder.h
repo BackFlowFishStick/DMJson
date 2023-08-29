@@ -1,5 +1,5 @@
 #pragma once
 
-#include "JsonEncoder.h"
+#include "DMJsonEncoder.h"
 
 void DecodeJson(char* jsonStr, struct JsonObj* obj);

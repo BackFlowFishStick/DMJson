@@ -1,3 +1,3 @@
-﻿  JsonEncoder.c
-D:\CPPPractices\JsonDecoder\JsonDecoder\JsonEncoder.c(82,40): warning C4028: 形参 2 与声明不同
-  JsonDecoder.vcxproj -> D:\CPPPractices\JsonDecoder\x64\Debug\JsonDecoder.exe
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: 中间目录(x64\Debug\)包含从另一个项目(JsonDecoder.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
+  main.c
+  JsonDecoder.vcxproj -> D:\CPPPractices\DMJson\x64\Debug\DMJson.exe

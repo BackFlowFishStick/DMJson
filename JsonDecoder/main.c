@@ -1,6 +1,8 @@
 #pragma once 
 #include <stdio.h>
-#include "JsonEncoder.h"
+
+#include "DMJsonEncoder.h"
+#include "DMJsonEncoder.h"
 
 int main(int argc, char** argv) 
 {
@@ -19,14 +21,14 @@ int main(int argc, char** argv)
 
 	//fclose(fp);*/
 
-	struct JsonObj testObj_0;
-	struct JsonObj testObj_1;
-	struct JsonObj testObj_2;
-	struct JsonObj testObj_3;
+	struct json_obj testObj_0;
+	struct json_obj testObj_1;
+	struct json_obj testObj_2;
+	struct json_obj testObj_3;
 
-	struct JsonObj testObj_4;
+	struct json_obj testObj_4;
 
-	struct JsonObj testObj_5;
+	struct json_obj testObj_5;
 	
 	create_bool("TestBool", 1, &testObj_0);
 	create_int("TestInt", 55, &testObj_1);
@@ -36,7 +38,7 @@ int main(int argc, char** argv)
 	/*add_next(&testObj_1, &testObj_0);
 	add_next(&testObj_2, &testObj_0);
 	add_next(&testObj_3, &testObj_0);*/
-	struct JsonObj* testObjArr = (struct JsonObj*)malloc(4 * sizeof(struct JsonObj));
+	struct json_obj* testObjArr = (struct json_obj*)malloc(4 * sizeof(struct json_obj));
 
 	if (testObjArr != NULL) 
 	{
@@ -49,7 +51,7 @@ int main(int argc, char** argv)
 
 	create_json_arr("JsonTestArray", testObjArr, 4, &testObj_4);
 
-	create_float("TestFloat", 123.1f, &testObj_5);
+	create_float("TestFloat", 112.123231111f, &testObj_5);
 
 	add_next(&testObj_5, &testObj_4);
 

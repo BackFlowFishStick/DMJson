@@ -18,18 +18,18 @@
     <ClCompile Include="main.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="JsonEncoder.c">
+    <ClCompile Include="DMJsonEncoder.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="JsonDecoder.c">
+    <ClCompile Include="DMJsonDecoder.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="JsonEncoder.h">
+    <ClInclude Include="DMJsonEncoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="JsonDecoder.h">
+    <ClInclude Include="DMJsonDecoder.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
