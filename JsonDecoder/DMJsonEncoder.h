@@ -48,5 +48,7 @@ void print_json(const char* json_str);
 void print_space(int level);
 void add_next(struct json_obj* next, struct json_obj* out);
 void clear_json(struct json_obj* root);
+void generate_json_obj_str(struct json_obj* obj, char* json_str);
+void generate_json_arr_str(struct json_obj* obj, char* json_str);
 void generate_json_str(struct json_obj* obj, char* json_str);
 int get_str_size_of_json(const struct json_obj* root);

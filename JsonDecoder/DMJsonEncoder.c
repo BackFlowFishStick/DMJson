@@ -279,41 +279,38 @@ void print_space(int level)
 	}
 }
 
-void generate_json_str(struct json_obj* obj, char* json_str) 
+void generate_json_obj_str(struct json_obj* obj, char* json_str)
 {
 	if (obj == NULL) return;
-	if (obj->prev == NULL && obj->parent == NULL) 
-	{
-		strcat(json_str, "{");
-	}
+
 	int keyLength = 0;
-	if (obj->obj_key == NULL) 
+	if (obj->obj_key == NULL)
 	{
 		keyLength = 0;
 	}
-	else 
+	else
 	{
 		keyLength = (int)strlen(obj->obj_key);
 	}
 
-	if (obj->json_type == JSON_TYPE_INT) 
+	if (obj->json_type == JSON_TYPE_INT)
 	{
 		int size = 10 + 4 + keyLength + 2;
 		char* temp = (char*)malloc(size * sizeof(char));
-		if (temp != NULL) 
+		if (temp != NULL)
 		{
 			temp[0] = 0;
 			sprintf(temp, "\"%s\": %d", obj->obj_key, obj->int_value);
 			strcat(json_str, temp);
-			free(temp);                                                    
+			free(temp);
 		}
 	}
 
-	if (obj->json_type == JSON_TYPE_FLOAT) 
+	if (obj->json_type == JSON_TYPE_FLOAT)
 	{
 		int size = 9 + 4 + keyLength + 2;
 		char* temp = (char*)malloc(size * sizeof(char));
-		if (temp != 0) 
+		if (temp != 0)
 		{
 			temp[0] = 0;
 
@@ -323,11 +320,11 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 		}
 	}
 
-	if (obj->json_type == JSON_TYPE_BOOL) 
+	if (obj->json_type == JSON_TYPE_BOOL)
 	{
 		int size = 5 + 4 + keyLength + 2;
 		char* temp = (char*)malloc(size * sizeof(char));
-		if (temp != 0) 
+		if (temp != 0)
 		{
 			*temp = 0;
 			sprintf(temp, "\"%s\": %s", obj->obj_key, obj->str_value);
@@ -336,11 +333,11 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 		}
 	}
 
-	if (obj->json_type == JSON_TYPE_STR) 
+	if (obj->json_type == JSON_TYPE_STR)
 	{
 		int size = (int)strlen(obj->str_value) + 4 + keyLength + 3;
 		char* temp = (char*)malloc(size * sizeof(char));
-		if (temp != 0) 
+		if (temp != 0)
 		{
 			*temp = 0;
 			sprintf(temp, "\"%s\": \"%s\"", obj->obj_key, obj->str_value);
@@ -348,11 +345,11 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 			free(temp);
 		}
 	}
-	if (obj->json_type == JSON_TYPE_NULL) 
+	if (obj->json_type == JSON_TYPE_NULL)
 	{
 		int size = 4 + 4 + keyLength + 2;
 		char* temp = (char*)malloc(size * sizeof(char));
-		if (temp != 0) 
+		if (temp != 0)
 		{
 			temp[0] = 0;
 			sprintf(temp, "\"%s\": %s", obj->obj_key, obj->str_value);
@@ -382,9 +379,9 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 
 		if (obj->child != NULL)
 		{
-			generate_json_str(obj->child, json_str);
+			generate_json_obj_str(obj->child, json_str);
 		}
-		
+
 		strcat(json_str, "]");
 	}
 
@@ -409,21 +406,30 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 
 		if (obj->child != NULL)
 		{
-			generate_json_str(obj->child, json_str);
+			generate_json_obj_str(obj->child, json_str);
 		}
 		strcat(json_str, "}");
 	}
 
-	if (obj->next != NULL) 
+	if (obj->next != NULL)
 	{
-		
+
 		strcat(json_str, ",");
-		generate_json_str(obj->next, json_str);
+		generate_json_obj_str(obj->next, json_str);
 	}
-	else if(obj->parent == NULL)
+	
+}
+
+
+void generate_json_str(struct json_obj* obj, char* json_str) 
+{
+	if(obj->json_type == JSON_TYPE_OBJ)
 	{
+		strcat(json_str, "{");
+		generate_json_obj_str(obj->child, json_str);
 		strcat(json_str, "}");
 	}
+
 
 }
 
