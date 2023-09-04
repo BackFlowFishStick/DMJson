@@ -420,6 +420,122 @@ void generate_json_obj_str(struct json_obj* obj, char* json_str)
 	
 }
 
+void generate_json_arr_str(struct json_obj* obj, char* json_str)
+{
+	if (obj == NULL) return;
+
+	if (obj->json_type == JSON_TYPE_INT)
+	{
+		int size = 10 + 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != NULL)
+		{
+			temp[0] = 0;
+			sprintf(temp, "%d", obj->int_value);
+			strcat(json_str, temp);
+			free(temp);
+		}
+	}
+
+	if (obj->json_type == JSON_TYPE_FLOAT)
+	{
+		int size = 9 + 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != 0)
+		{
+			temp[0] = 0;
+
+			sprintf(temp, "%.6f", obj->float_value);
+			strcat(json_str, temp);
+			free(temp);
+		}
+	}
+
+	if (obj->json_type == JSON_TYPE_BOOL)
+	{
+		int size = 5 + 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != 0)
+		{
+			*temp = 0;
+			sprintf(temp, "%s", obj->str_value);
+			strcat(json_str, temp);
+			free(temp);
+		}
+	}
+
+	if (obj->json_type == JSON_TYPE_STR)
+	{
+		int size = (int)strlen(obj->str_value) + 3;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != 0)
+		{
+			*temp = 0;
+			sprintf(temp, "\"%s\"", obj->str_value);
+			strcat(json_str, temp);
+			free(temp);
+		}
+	}
+	if (obj->json_type == JSON_TYPE_NULL)
+	{
+		int size = 4 + 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != 0)
+		{
+			temp[0] = 0;
+			sprintf(temp, "%s", obj->str_value);
+			strcat(json_str, temp);
+			free(temp);
+		}
+	}
+
+	if (obj->json_type == JSON_TYPE_ARR)
+	{
+		int size = 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != NULL)
+		{
+			*temp = 0;
+			sprintf(temp, "[");
+			strcat(json_str, temp);
+			free(temp);
+		}
+
+		if (obj->child != NULL)
+		{
+			generate_json_obj_str(obj->child, json_str);
+		}
+
+		strcat(json_str, "]");
+	}
+
+	if (obj->json_type == JSON_TYPE_OBJ)
+	{
+		int size = 2;
+		char* temp = (char*)malloc(size * sizeof(char));
+		if (temp != NULL)
+		{
+			*temp = 0;
+			sprintf(temp, "{");
+			strcat(json_str, temp);
+			free(temp);
+		}
+
+		if (obj->child != NULL)
+		{
+			generate_json_obj_str(obj->child, json_str);
+		}
+		strcat(json_str, "}");
+	}
+
+	if (obj->next != NULL)
+	{
+
+		strcat(json_str, ",");
+		generate_json_obj_str(obj->next, json_str);
+	}
+}
+
 
 void generate_json_str(struct json_obj* obj, char* json_str) 
 {
@@ -429,7 +545,12 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 		generate_json_obj_str(obj->child, json_str);
 		strcat(json_str, "}");
 	}
-
+	else
+	{
+		strcat(json_str, "[");
+		generate_json_arr_str(obj->child, json_str);
+		strcat(json_str, "]");
+	}
 
 }
 
