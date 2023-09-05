@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "DMJsonEncoder.h"
-#include "DMJsonEncoder.h"
+#include "DMJsonDecoder.h"
 
 int main(int argc, char** argv) 
 {
