@@ -4,21 +4,22 @@ uint8_t decode_json_str(const char* jsonStr, struct JsonObj* out)
 {
 	int i = 0;
 
-	int len = strlen(jsonStr);
+	const int len = (int)strlen(jsonStr);
 
-	int isBracked = 0; 
+	int isBracket = 1;
+	int isParantheses = 1;
 
 	if(len == 0) 
 	{
 		return 0;
 	}
 
-	if(jsonStr[i] != '{' || jsonStr[i] != '[') 
+	if(jsonStr[0] != '{' && jsonStr[0] != '[') 
 	{
 		return 0;
 	}
 
-	if(jsonStr[len - 2] != '}' || jsonStr[len - 2] != ']') 
+	if(jsonStr[len - 2] != '}' && jsonStr[len - 2] != ']') 
 	{
 		return 0; 
 	}
@@ -27,19 +28,38 @@ uint8_t decode_json_str(const char* jsonStr, struct JsonObj* out)
 	{
 		i++;
 
-		if(jsonStr[i] = '{')
+		if(jsonStr[i] == '{')
+		{
+			isBracket = 0;
+
+		}
+
+		else if(jsonStr[i] == '[' )
+		{
+			isParantheses = 0;
+		}
+
+		if(jsonStr[i] == '}' && isBracket == 0)
+		{
+			isBracket = 1;
+		}
+		else if(jsonStr[i] == ']' && isParantheses == 0)
+		{
+			isParantheses = 1;
+		}
+
+	}
+
+	if(isBracket == 0 || isParantheses == 0)
+	{
+		return 0;
+
 	}
 
 }
 
 void get_json_obj(const char* jsonStr, const char* objKey, struct JsonObj* obj)
 {
-	int i = 0;
-
-	while(jsonStr[i] != '{') 
-	{
-		i++;
-	}
 
 }
 
