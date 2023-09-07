@@ -1,6 +1,6 @@
 #include "DMJsonDecoder.h"
 
-uint8_t decode_json_str(const char* jsonStr, struct JsonObj* out) 
+uint8_t decode_json_str_to_obj(const char* jsonStr, struct JsonObj* out) 
 {
 	int i = 0;
 
@@ -8,6 +8,7 @@ uint8_t decode_json_str(const char* jsonStr, struct JsonObj* out)
 
 	int isBracket = 1;
 	int isParantheses = 1;
+	int isKey = 1;
 
 	if(len == 0) 
 	{
@@ -47,43 +48,53 @@ uint8_t decode_json_str(const char* jsonStr, struct JsonObj* out)
 		{
 			isParantheses = 1;
 		}
-
+		if (jsonStr[i] == '\"')
+		{
+			isKey = 0;
+			
+			for(int j = i + 1; jsonStr[j] != '\"'; ++j)
+			{
+				
+			}
+		}
+		
 	}
 
 	if(isBracket == 0 || isParantheses == 0)
 	{
 		return 0;
-
 	}
 
 }
 
-void get_json_obj(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_obj(const char* objKey, struct JsonObj* obj)
 {
+	
 
+	return 0;
 }
 
-void get_json_int(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_int(const char* objKey, struct JsonObj* obj)
 {
-
+	return 0;
 }
 
-void get_json_float(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_float(const char* objKey, struct JsonObj* obj)
 {
-
+	return 0;
 }
 
-void get_json_bool(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_bool(const char* objKey, struct JsonObj* obj)
 {
-
+	return 0;
 }
 
-void get_json_null(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_null(const char* objKey, struct JsonObj* obj)
 {
-
+	return 0;
 }
 
-void get_json_arr(const char* jsonStr, const char* objKey, struct JsonObj* obj)
+uint8_t get_json_arr(const char* objKey, struct JsonObj* obj)
 {
-
+	return 0;
 }
