@@ -399,7 +399,7 @@ FodyWeavers.xsd
 
 # MicroSoft VisualStudio 
 *.vcxproj
-*.JsonDecoder.vcxproj.filters
+*.vcxproj.filters
 *.sln
 
 # Sublime
