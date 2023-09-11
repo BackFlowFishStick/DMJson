@@ -396,3 +396,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# MicroSoft VisualStudio 
+*.vcxproj
+*.JsonDecoder.vcxproj.filters
+*.sln
+
+# Sublime
+*.sublime-workspace
