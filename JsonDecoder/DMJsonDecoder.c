@@ -10,6 +10,10 @@ uint8_t decode_json_str_to_obj(const char* json_str, struct json_obj* out)
 	int quotation_start_index = 0;
 	int quotation_end_index = 0;
 
+	int inside_square_bracket = 0;
+	int arr_start_index = 0;
+	int arr_end_index = 0;
+ 
 	initialize_json_obj(out);
 
 	for (int i = 1; i < strlen(json_str); i++) {
@@ -19,19 +23,34 @@ uint8_t decode_json_str_to_obj(const char* json_str, struct json_obj* out)
 
 			obj_start_index = i + 1;
 
+		}
+		else if (json_str[i] == '}' && inside_braces == 1) 
+		{
+			obj_end_index = i - 1;
+			inside_braces = 0;
+			break; 
+		}
+		else if(inside_braces == 1 && json_str[i] == '{')
+		{
 			struct json_obj child_node;
 			initialize_json_obj(&child_node);
 			const int child_node_result = decode_json_str_to_obj((json_str + obj_start_index), &child_node);
 
-			if(child_node_result == 1)
+			if (child_node_result == 1)
 			{
 				add_attribute(&child_node, out);
 			}
 		}
-		else if (json_str[i] == '}' && inside_braces == 1) 
+		else if(json_str[i] == '[')
 		{
-			obj_end_index = i; 
-			break; 
+			arr_start_index = 1;
+
+			arr_start_index = i + 1;
+		}
+
+		else if(json_str[i] == ']' && inside_square_bracket == 1)
+		{
+			
 		}
 	}
 
