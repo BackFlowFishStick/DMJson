@@ -408,3 +408,5 @@ FodyWeavers.xsd
 # CLion
 CMakeLists.txt
 cmake-build-debug/
+.idea/
+JsonDecoder/.idea/
