@@ -15,19 +15,21 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out)
 
 
 	int inside_braces = 0;
-	int obj_start_index = 0;
-	int obj_end_index = 0;
+	int obj_start_index = -1;
+	int obj_end_index = -1;
 
 	int inside_quotation = 0;
-	int quotation_start_index = 0;
-	int quotation_end_index = 0;
+	int quotation_start_index = -1;
+	int quotation_end_index = -1;
 
 	int inside_square_bracket = 0;
-	int arr_start_index = 0;
-	int arr_end_index = 0;
+	int arr_start_index = -1;
+	int arr_end_index = -1;
 
     int is_obj_finish = 0;
     int is_key_finish = 0;
+	int is_before_colon = 0;
+
  
 	initialize_json_obj(out);
 
@@ -51,6 +53,17 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out)
         {
 
         }
+
+		else if(json_str[i] == ':')
+		{
+			if(is_before_colon == 0 && quotation_start_index != -1) 
+			{
+				for(int quoation_index = quotation_start_index; quoation_index < quotation_end_index + 1; quoation_index++)
+				{
+					
+				}
+			}
+		}
 
 		else if(json_str[i] == ']' && inside_square_bracket == 1)
 		{
