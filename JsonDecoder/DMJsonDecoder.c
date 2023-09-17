@@ -1,25 +1,15 @@
 #include "DMJsonDecoder.h"
 
-uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *current_index)
+uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
 {
-    if(json_str == NULL)
+    if(root_obj == NULL || json_str == NULL)
     {
-        printf("Json text is required!\n");
-        return 0;
-    }
-    if(out == NULL)
-    {
-        printf("Json Object is required!\n");
+        printf("This method require both parameters.\n");
+
         return 0;
     }
 
-    if(current_index == NULL || *current_index < 0 || *current_index > strlen(json_str))
-    {
-        printf("The current index is invalid.\n");
-        return 0;
-    }
-
-    int inside_braces = 0;
+	int inside_braces = 0;
 	int obj_start_index = -1;
 	int obj_end_index = -1;
 
@@ -37,10 +27,10 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
     int is_key_finish = 0;
 	int is_after_colon = 0;
 
- 
-	initialize_json_obj(out);
+    initialize_json_obj(root_obj);
 
-	for (int i = *current_index; i < strlen(json_str); i++)
+
+	for (int i = 0; i < (int)strlen(json_str); i++)
     {
         if(json_str[i] == '\"')
         {
@@ -51,6 +41,7 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
                 if(is_after_colon != 0)
                 {
                     str_value_start_index = i + 1;
+
                 }
                 else
                 {
@@ -64,6 +55,25 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
                 if(is_after_colon != 0)
                 {
                     str_value_end_index = i - 1;
+
+                    struct json_obj str_obj;
+                    initialize_json_obj(&str_obj);
+                    if(parse_json_str((json_str + str_value_start_index), &str_obj) != 0)
+                    {
+                        add_attribute(&str_obj, &root_obj);
+
+                        if(key_end_index != -1 && key_start_index != -1)
+                        {
+                            str_obj.obj_key = (char*)malloc((key_end_index + 2 - key_start_index) * sizeof(char));
+
+                            strncpy(str_obj.obj_key, (json_str + key_start_index), (key_end_index - key_start_index + 1));
+                        }
+                    }
+                    else
+                    {
+                        goto invalid_format;
+                    }
+
                 }
                 else
                 {
@@ -91,7 +101,7 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
                 obj_start_index = i + 1;
             }
             inside_braces += 1;
-            if(obj_start_index > strlen(json_str))
+            if(obj_start_index > (int)strlen(json_str))
             {
                 goto invalid_format;
             }
@@ -103,6 +113,26 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
             if(inside_braces == 0)
             {
                 obj_end_index = i - 1;
+
+                struct json_obj child_obj;
+                initialize_json_obj(&child_obj);
+
+                if(parse_json_obj((json_str + obj_start_index), &child_obj) != 0)
+                {
+                    add_attribute(&child_obj, root_obj);
+
+                    if (key_end_index != -1 && key_start_index != -1)
+                    {
+                        child_obj.obj_key = (char*)malloc((key_end_index + 2 - key_start_index) * sizeof(char));
+
+                        strncpy(child_obj.obj_key, (json_str + key_start_index), (key_end_index - key_start_index + 1));
+                    }
+                }
+                else
+                {
+                    goto invalid_format;
+                }
+
             }
             if(obj_end_index < 0)
             {
@@ -129,6 +159,25 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
             if(inside_square_bracket == 0)
             {
                 arr_end_index = i - 1;
+
+                struct json_obj child_obj;
+                initialize_json_obj(&child_obj);
+
+                if (parse_json_arr((json_str + obj_start_index), &child_obj) != 0)
+                {
+                    add_attribute(&child_obj, root_obj);
+
+                    if (key_end_index != -1 && key_start_index != -1)
+                    {
+                        child_obj.obj_key = (char*)malloc((key_end_index + 2 - key_start_index) * sizeof(char));
+
+                        strncpy(child_obj.obj_key, (json_str + key_start_index), (key_end_index - key_start_index + 1));
+                    }
+                }
+                else
+                {
+                    goto invalid_format;
+                }
             }
             if(arr_end_index < 0)
             {
@@ -138,8 +187,6 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
 
         if(json_str[i] == ',')
         {
-            struct json_obj child_node;
-            initialize_json_obj(&child_node);
 
 
         }
@@ -150,12 +197,63 @@ uint8_t decode_json_str_to_obj(const char *json_str, struct json_obj *out, int *
 
     invalid_format:
     {
+        clear_json(root_obj);
         printf("The format is invalid.\n");
         return 0;
-    };
+    }
 
 
 }
+
+uint8_t parse_json_str(const char* json_str, struct json_obj* obj)
+{
+    int str_len = 0;
+
+    while(*(json_str + str_len) != ',')
+    {
+        str_len++;
+    }
+
+    obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
+    if(obj->str_value == NULL)
+    {
+        return 0;
+    }
+
+    strncpy(obj->str_value, json_str, (str_len + 1));
+
+    return 1;
+}
+
+uint8_t parse_json_num(const char* json_str, struct json_obj* obj)
+{
+    uint8_t _type = 0;
+
+    
+    return 0;
+}
+
+uint8_t parse_json_int(const char* json_str, struct json_obj* obj)
+{
+    return 0;
+}
+
+uint8_t parse_json_float(const char* json_str, struct json_obj* obj)
+{
+    return 0;
+}
+
+uint8_t parse_json_arr(const char* json_str, struct json_obj* obj)
+{
+    return 0;
+}
+
+uint8_t parse_json_obj(const char* json_str, struct json_obj* obj)
+{
+    return 0;
+}
+
+
 
 uint8_t get_json_obj(const char* obj_key, struct json_obj* obj)
 {
