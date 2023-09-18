@@ -4,6 +4,7 @@
 #include "DMJsonEncoder.h"
 #include "DMJsonDecoder.h"
 
+
 int main(int argc, char** argv) 
 {
 	/*FILE* fp;
@@ -57,6 +58,16 @@ int main(int argc, char** argv)
 	printf("The actual size of json string is: %d\n", actual_size);
 
 	print_json(test_str);
+
+	const char* test_digits = "1237891020";
+	int start_index = 3;
+	int end_index = 7;
+
+	char* temp_piece = (char*)malloc(5 * sizeof(char));
+
+	strncpy(temp_piece, test_digits + 3, 5);
+
+	printf("%s\n", temp_piece);
 
 	return 0;
 }

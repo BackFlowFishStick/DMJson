@@ -27,6 +27,12 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
     int is_key_finish = 0;
 	int is_after_colon = 0;
 
+    int digit_start_index = -1;
+    int digit_end_index = -1;
+
+    int other_start_index = -1;
+    int other_end_index = -1;
+
     initialize_json_obj(root_obj);
 
 
@@ -60,7 +66,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
                     initialize_json_obj(&str_obj);
                     if(parse_json_str((json_str + str_value_start_index), &str_obj) != 0)
                     {
-                        add_attribute(&str_obj, &root_obj);
+                        add_attribute(&str_obj, root_obj);
 
                         if(key_end_index != -1 && key_start_index != -1)
                         {
@@ -82,7 +88,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
 
             }
         }
-        if(json_str[i] == ':')
+        else if(json_str[i] == ':')
         {
             if(is_after_colon != 0)
             {
@@ -94,7 +100,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
             }
         }
 
-        if(json_str[i] == '{')
+        else if(json_str[i] == '{')
         {
             if(inside_braces == 0)
             {
@@ -107,7 +113,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
             }
         }
 
-        if(json_str[i] == '}')
+        else if(json_str[i] == '}')
         {
             inside_braces -= 1;
             if(inside_braces == 0)
@@ -139,7 +145,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
                 goto invalid_format;
             }
         }
-        if(json_str[i] == '[')
+        else if(json_str[i] == '[')
         {
             if(inside_square_bracket == 0)
             {
@@ -153,7 +159,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
             }
         }
 
-        if(json_str[i] == ']')
+        else if(json_str[i] == ']')
         {
             inside_square_bracket -= 1;
             if(inside_square_bracket == 0)
@@ -185,10 +191,34 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
             }
         }
 
-        if(json_str[i] == ',')
+        else if(json_str[i] == ',')
         {
+            if(inside_quotation == 0 && digit_start_index != -1)
+            {
+                struct json_obj digit_obj;
+                initialize_json_obj(&digit_obj);
 
+                if(parse_json_num(json_str + digit_start_index, &digit_obj) != 0)
+                {
+                    add_attribute(&digit_obj, root_obj);
+                }
+            }
 
+        }
+        else
+        {
+	        if(json_str[i] >= 48 && json_str[i] <= 57)
+	        {
+		        if(digit_start_index == -1)
+		        {
+                    digit_start_index = i;
+		        }
+                else
+                {
+                    digit_end_index = i;
+                }
+
+	        }
         }
 
 	}
@@ -209,7 +239,7 @@ uint8_t parse_json_str(const char* json_str, struct json_obj* obj)
 {
     int str_len = 0;
 
-    while(*(json_str + str_len) != ',')
+    while(*(json_str + str_len) != '\"')
     {
         str_len++;
     }
@@ -221,6 +251,7 @@ uint8_t parse_json_str(const char* json_str, struct json_obj* obj)
     }
 
     strncpy(obj->str_value, json_str, (str_len + 1));
+    obj->json_type = JSON_TYPE_STR;
 
     return 1;
 }
