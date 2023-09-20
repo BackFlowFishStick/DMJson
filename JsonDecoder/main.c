@@ -63,11 +63,15 @@ int main(int argc, char** argv)
 	int start_index = 3;
 	int end_index = 7;
 
-	char* temp_piece = (char*)malloc(5 * sizeof(char));
+	char* temp_piece = (char*)malloc(6 * sizeof(char));
+
+    memset(temp_piece, '\0', 6);
 
 	strncpy(temp_piece, test_digits + 3, 5);
 
 	printf("%s\n", temp_piece);
+
+    printf("Str length: %d\n", (int)strlen(temp_piece));
 
 	return 0;
 }
