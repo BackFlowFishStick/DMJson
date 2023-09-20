@@ -251,6 +251,30 @@ uint8_t parse_json_str(const char *json_str, struct json_obj *obj, uint8_t count
     return 1;
 }
 
+uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj, uint8_t count) {
+
+    obj->str_value = (char*)malloc((count + 1) * sizeof(char));
+
+    if(obj->str_value == NULL)
+    {
+        return 0;
+    }
+    memset(obj->str_value, '\0', count + 1);
+
+    strncpy(obj->str_value, json_str, count);
+
+    if(strcmp(obj->str_value, JSON_TYPE_NULL) == 0)
+    {
+        obj->json_type = JSON_TYPE_NULL;
+    }
+    else
+    {
+        obj->json_type = JSON_TYPE_BOOL;
+    }
+
+    return 1;
+}
+
 uint8_t parse_json_num(const char *json_str, struct json_obj *obj, uint8_t count)
 {
     uint8_t _type = 0;
@@ -376,3 +400,5 @@ struct json_obj *get_current_attribute(const struct json_obj *root) {
 
     return NULL;
 }
+
+
