@@ -556,12 +556,17 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 
 void clear_json(struct json_obj* root)
 {
-	if (root->child)
+    if(root == NULL)
+    {
+        return;
+    }
+	if (root->child != NULL)
 	{
 		clear_json(root->child);
 	}
-	if (root->next)
+	if (root->next != NULL)
 	{
+//        printf("Next is not nuLL");
 		clear_json(root->next);
 	}
 
