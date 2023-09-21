@@ -64,7 +64,7 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
 
                     struct json_obj str_obj;
                     initialize_json_obj(&str_obj);
-                    if(parse_json_str((json_str + str_value_start_index), &str_obj, (str_value_end_index - str_value_start_index+ 1)) != 0)
+                    if(parse_json_str((json_str + str_value_start_index), &str_obj) != 0)
                     {
                         add_attribute(&str_obj, root_obj);
 
@@ -235,35 +235,51 @@ uint8_t parse_json_str_to_obj(const char* json_str, struct json_obj* root_obj)
 
 }
 
-uint8_t parse_json_str(const char *json_str, struct json_obj *obj, uint8_t count)
+uint8_t parse_json_str(const char *json_str, struct json_obj *obj)
 {
-    obj->str_value = (char*)malloc((count + 1) * sizeof(char));
+    uint8_t str_len = 0;
+    while(json_str[str_len] != '\"')
+    {
+        ++str_len;
+    }
+
+    obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
 
     if(obj->str_value == NULL)
     {
         return 0;
     }
-    memset(obj->str_value, '\0', count + 1);
 
-    strncpy(obj->str_value, json_str, count);
+
+    memset(obj->str_value, '\0', str_len+ 1);
+
+    strncpy(obj->str_value, json_str, str_len);
     obj->json_type = JSON_TYPE_STR;
 
-    return 1;
+    return str_len;
 }
 
-uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj, uint8_t count) {
+uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj) {
 
-    obj->str_value = (char*)malloc((count + 1) * sizeof(char));
+    uint8_t str_len = 0;
+    while (json_str[str_len] != ',')
+    {
+        ++str_len;
+    }
 
-    if(obj->str_value == NULL)
+    obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
+
+    if (obj->str_value == NULL)
     {
         return 0;
     }
-    memset(obj->str_value, '\0', count + 1);
 
-    strncpy(obj->str_value, json_str, count);
 
-    if(strcmp(obj->str_value, JSON_TYPE_NULL) == 0)
+    memset(obj->str_value, '\0', str_len + 1);
+
+    strncpy(obj->str_value, json_str, str_len);
+
+    if(strcmp(obj->str_value, JSON_NULL) == 0)
     {
         obj->json_type = JSON_TYPE_NULL;
     }
@@ -272,7 +288,7 @@ uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj, uint8
         obj->json_type = JSON_TYPE_BOOL;
     }
 
-    return 1;
+    return str_len;
 }
 
 uint8_t parse_json_num(const char *json_str, struct json_obj *obj, uint8_t count)

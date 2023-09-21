@@ -75,11 +75,12 @@ int main(int argc, char** argv)
 
     char* sample_json = "{\n \"Test Int\":  123,\n \"Test Bool\":  true,\n \"Test Float\":  4.256780,\n \"Test Null\":  Null,\n \"Test String\":  \"This is just a piece of meaningless comment.\"\n}\0";
 
+	char* sample_str = "\"The Sample\": \"SampleStr\"\0";
     struct json_obj test_parse_root;
 
     initialize_json_obj(&test_parse_root);
 
-    uint8_t result = parse_json_num(sample_json + 16, &test_parse_root, 3);
+    const uint8_t result = parse_json_num(sample_json + 16, &test_parse_root, 3);
 
     printf("%d\n", result);
 
@@ -87,6 +88,21 @@ int main(int argc, char** argv)
 
     printf("obj value: %d\n", test_parse_root.int_value);
 
+	struct json_obj test_parse_str;
+
+	initialize_json_obj(&test_parse_str);
+
+	const uint8_t result_1 = parse_json_str(sample_str + 15, &test_parse_str);
+
+	printf("Result: %d\n", result_1);
+
+	printf("obj type: %d\n", test_parse_str.json_type);
+
+	printf("obj valule: %s\n", test_parse_str.str_value);
+
+	clear_json(&test_parse_root);
+
+	clear_json(&test_parse_str);
 //    int str_len = get_str_size_of_json(&test_parse_root);
 
 //    char* temp_str = (char*)malloc(str_len * sizeof(char));
