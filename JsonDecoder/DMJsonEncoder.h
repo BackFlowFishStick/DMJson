@@ -35,6 +35,9 @@ struct json_obj
 	struct json_obj* parent;
 };
 
+struct json_obj* DMJson_malloc();
+void DMJson_release(struct json_obj* obj);
+
 void initialize_json_obj(struct json_obj* out);
 void create_int(const char* key, int value, struct json_obj* out);
 void create_float(const char* key, float value, struct json_obj* out);

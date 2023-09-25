@@ -1,6 +1,24 @@
 #include "DMJsonEncoder.h"
 
-void initialize_json_obj(struct json_obj* out) 
+struct json_obj *DMJson_malloc()
+{
+    struct json_obj * out = (struct json_obj*)malloc(sizeof(struct json_obj));
+
+    if(out == NULL)
+    {
+        printf("Memmory Allocation failed.\n ");
+        return NULL;
+    }
+
+    return out;
+}
+void DMJson_release(struct json_obj *obj)
+{
+    clear_json(obj);
+    free(obj);
+}
+
+void initialize_json_obj(struct json_obj* out)
 {
 	out->json_type = 0;
 	out->obj_key = NULL;
@@ -581,6 +599,14 @@ void clear_json(struct json_obj* root)
 	}
 	initialize_json_obj(root);
 }
+
+
+
+
+
+
+
+
 
 
 

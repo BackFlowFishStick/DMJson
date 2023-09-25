@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 
 	//,\"Test Bool\" : true,\"Test Float\" : 4.256780, \"Test Null\" : Null, \"Test String\" : \"This is just a piece of meaningless comment.\"
 
-	char* temp_json_str = "{\"Test Int\":  123}";
+	char* temp_json_str = "{\"Test Float\":  123.35, \"Test Int\": 123}";
 
 	printf("%s\n", temp_json_str);
 
@@ -89,11 +89,14 @@ int main(int argc, char** argv)
 
 	initialize_json_obj(&test_json_root);
 
-	uint8_t result = parse_json_obj(temp_json_str + 1, &test_json_root);
+	uint8_t result = parse_json_obj(temp_json_str, &test_json_root);
 
 	printf("Result is %d\n", result);
 
-	printf("%s\n", test_json_root.child->obj_key);
+    if(test_json_root.child != NULL)
+    {
+        printf("root child key: %s\n", test_json_root.child->next->obj_key);
+    }
 
     return 0;
 }
