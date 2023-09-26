@@ -172,7 +172,7 @@ uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
         }
         else if (json_str[i] == '\"' && key_start != -1 && value_start != -1)
         {
-            struct json_obj * child_obj = DMJson_malloc();
+            DM_JSON_OBJ* child_obj = JSON_MALLOC();
             initialize_json_obj(child_obj);
             uint8_t result = parse_json_str(json_str + i + 1, child_obj);
 
@@ -184,7 +184,7 @@ uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
             }
             else
             {
-                DMJson_release(child_obj);
+                JSON_FREE(child_obj);
                 clear_json(obj);
                 return 0;
             } 
@@ -195,7 +195,7 @@ uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
         }
         else if(json_str[i] == '{' && inside_braces != -1)
         {
-            struct json_obj * child_obj = DMJson_malloc();
+            DM_JSON_OBJ* child_obj = JSON_MALLOC();
             initialize_json_obj(child_obj);
             uint8_t result = parse_json_obj(json_str + i + 1, child_obj);
 
@@ -207,7 +207,7 @@ uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
             }
             else
             {
-                DMJson_release(child_obj);
+                JSON_FREE(child_obj);
                 clear_json(obj);
                 return 0;
             }

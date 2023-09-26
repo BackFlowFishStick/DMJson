@@ -22,6 +22,11 @@
 #define JSON_LENGTH 2000;
 #define JSON_SPACE "  "
 
+#define JSON_MALLOC DMJson_malloc
+#define JSON_FREE DMJson_release
+
+#define DM_JSON_OBJ struct json_obj
+
 struct json_obj
 {
 	uint8_t json_type;
