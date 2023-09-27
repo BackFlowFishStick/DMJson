@@ -22,8 +22,8 @@
 #define JSON_LENGTH 2000;
 #define JSON_SPACE "  "
 
-#define JSON_MALLOC DMJson_malloc
-#define JSON_FREE DMJson_release
+#define JSON_MALLOC json_malloc
+#define JSON_FREE json_release
 
 #define DM_JSON_OBJ struct json_obj*
 
@@ -40,8 +40,8 @@ struct json_obj
 	DM_JSON_OBJ parent;
 };
 
-DM_JSON_OBJ DMJson_malloc();
-void DMJson_release(DM_JSON_OBJ obj);
+DM_JSON_OBJ json_malloc();
+void json_release(DM_JSON_OBJ obj);
 
 void initialize_json_obj(DM_JSON_OBJ out);
 void create_int(const char* key, int value, DM_JSON_OBJ out);
