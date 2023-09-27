@@ -18,7 +18,7 @@ void DMJson_release(struct json_obj *obj)
     free(obj);
 }
 
-void initialize_json_obj(struct json_obj* out)
+void initialize_json_obj(struct json_obj *out)
 {
 	out->json_type = 0;
 	out->obj_key = NULL;
@@ -31,7 +31,7 @@ void initialize_json_obj(struct json_obj* out)
 	out->parent = NULL;
 }
 
-void create_int(const char* key,int value, struct json_obj* out) 
+void create_int(const char* key, int value, struct json_obj *out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));

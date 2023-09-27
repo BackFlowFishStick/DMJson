@@ -25,7 +25,7 @@
 #define JSON_MALLOC DMJson_malloc
 #define JSON_FREE DMJson_release
 
-#define DM_JSON_OBJ struct json_obj
+#define DM_JSON_OBJ struct json_obj*
 
 struct json_obj
 {
@@ -43,8 +43,8 @@ struct json_obj
 struct json_obj* DMJson_malloc();
 void DMJson_release(struct json_obj* obj);
 
-void initialize_json_obj(struct json_obj* out);
-void create_int(const char* key, int value, struct json_obj* out);
+void initialize_json_obj(struct json_obj *out);
+void create_int(const char* key, int value, struct json_obj *out);
 void create_float(const char* key, float value, struct json_obj* out);
 void create_null(const char* key, struct json_obj* out);
 void create_bool(const char* key, uint8_t bool_value, struct json_obj* out);
