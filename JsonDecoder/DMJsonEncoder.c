@@ -12,13 +12,13 @@ struct json_obj *DMJson_malloc()
 
     return out;
 }
-void DMJson_release(struct json_obj *obj)
+void DMJson_release(DM_JSON_OBJ obj)
 {
     clear_json(obj);
     free(obj);
 }
 
-void initialize_json_obj(struct json_obj *out)
+void initialize_json_obj(DM_JSON_OBJ out)
 {
 	out->json_type = 0;
 	out->obj_key = NULL;
@@ -31,7 +31,7 @@ void initialize_json_obj(struct json_obj *out)
 	out->parent = NULL;
 }
 
-void create_int(const char* key, int value, struct json_obj *out)
+void create_int(const char* key, int value, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -43,7 +43,7 @@ void create_int(const char* key, int value, struct json_obj *out)
 	out->int_value = value;
 	out->json_type = JSON_TYPE_INT;
 }
-void create_float(const char* key, const float value, struct json_obj* out) 
+void create_float(const char* key, const float value, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -55,7 +55,7 @@ void create_float(const char* key, const float value, struct json_obj* out)
 	out->json_type = JSON_TYPE_FLOAT;
 	out->float_value = value;
 }
-void create_null(const char* key,struct json_obj* out) 
+void create_null(const char* key, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -70,7 +70,7 @@ void create_null(const char* key,struct json_obj* out)
 		strcpy(out->str_value, JSON_NULL);
 	}
 }
-void create_bool(const char* key, uint8_t bool_value, struct json_obj* out)
+void create_bool(const char* key, uint8_t bool_value, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -97,7 +97,7 @@ void create_bool(const char* key, uint8_t bool_value, struct json_obj* out)
 		}
 	}
 }
-void create_str(const char* key, const char* value, struct json_obj* out) 
+void create_str(const char* key, const char* value, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key)+1));
@@ -114,7 +114,7 @@ void create_str(const char* key, const char* value, struct json_obj* out)
 	
 }
 
-void create_json_arr(const char* key, struct json_obj *arr, int arr_len, struct json_obj* out)
+void create_json_arr(const char* key, DM_JSON_OBJ* arr_elems, int arr_len, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -124,24 +124,24 @@ void create_json_arr(const char* key, struct json_obj *arr, int arr_len, struct 
 	}
 	out->json_type = JSON_TYPE_ARR;
 	out->int_value = arr_len;
-	out->child = &arr[0];
+	out->child = &(*arr_elems)[0];
 
 	for (int i = 0; i < arr_len; ++i) 
 	{
-		arr[i].parent = out;
+		(*arr_elems)[i].parent = out;
 		if (i < arr_len - 1) 
 		{
-			arr[i].next = &arr[i + 1];
+			(*arr_elems)[i].next = &(*arr_elems)[i + 1];
 		}
 		if (i > 0) 
 		{
-			arr[i].prev = &arr[i - 1];
+			(*arr_elems)[i].prev = &(*arr_elems)[i - 1];
 		}
 	}
 
 }
 
-void create_json_obj(const char* key, struct json_obj* out)
+void create_json_obj(const char* key, DM_JSON_OBJ out)
 {
 	initialize_json_obj(out);
 	out->obj_key = (char*)malloc(sizeof(char) * (strlen(key) + 1));
@@ -154,7 +154,7 @@ void create_json_obj(const char* key, struct json_obj* out)
 
 }
 
-void add_attribute(struct json_obj* new_att, struct json_obj* out) 
+void add_attribute(DM_JSON_OBJ new_att, DM_JSON_OBJ out)
 {
 	new_att->parent = out;
 	if (out->child == NULL) 
@@ -167,7 +167,7 @@ void add_attribute(struct json_obj* new_att, struct json_obj* out)
 	}
 }
 
-void add_next(struct json_obj* next, struct json_obj* out) 
+void add_next(DM_JSON_OBJ next, DM_JSON_OBJ out)
 {
 	if (out->next == NULL) 
 	{
@@ -180,7 +180,7 @@ void add_next(struct json_obj* next, struct json_obj* out)
 	}
 }
 
-int get_str_size_of_json(const struct json_obj* root) 
+int get_str_size_of_json(const DM_JSON_OBJ root)
 {
 	int len = 0; 
 	int next_len = 0;
@@ -297,7 +297,7 @@ void print_space(int level)
 	}
 }
 
-void generate_json_obj_str(struct json_obj* obj, char* json_str)
+void generate_json_obj_str(DM_JSON_OBJ obj, char* json_str)
 {
 	if (obj == NULL) return;
 
@@ -438,7 +438,7 @@ void generate_json_obj_str(struct json_obj* obj, char* json_str)
 	
 }
 
-void generate_json_arr_str(struct json_obj* obj, char* json_str)
+void generate_json_arr_str(DM_JSON_OBJ obj, char* json_str)
 {
 	if (obj == NULL) return;
 
@@ -555,7 +555,7 @@ void generate_json_arr_str(struct json_obj* obj, char* json_str)
 }
 
 
-void generate_json_str(struct json_obj* obj, char* json_str) 
+void generate_json_str(DM_JSON_OBJ obj, char* json_str)
 {
 	if(obj->json_type == JSON_TYPE_OBJ)
 	{
@@ -572,7 +572,7 @@ void generate_json_str(struct json_obj* obj, char* json_str)
 
 }
 
-void clear_json(struct json_obj* root)
+void clear_json(DM_JSON_OBJ root)
 {
     if(root == NULL)
     {
@@ -584,7 +584,6 @@ void clear_json(struct json_obj* root)
 	}
 	if (root->next != NULL)
 	{
-//        printf("Next is not nuLL");
 		clear_json(root->next);
 	}
 
@@ -598,6 +597,7 @@ void clear_json(struct json_obj* root)
 		free(root->str_value);
 	}
 	initialize_json_obj(root);
+	JSON_FREE(root);
 }
 
 

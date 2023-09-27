@@ -1,6 +1,6 @@
 #include "DMJsonDecoder.h"
 
-uint8_t parse_json_str(const char *json_str, struct json_obj *obj)
+uint8_t parse_json_str(const char *json_str, DM_JSON_OBJ obj)
 {
     uint8_t str_len = 0;
     while(json_str[str_len] != '\"')
@@ -24,7 +24,7 @@ uint8_t parse_json_str(const char *json_str, struct json_obj *obj)
     return str_len;
 }
 
-uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj) {
+uint8_t parse_special_json_str(const char *json_str, DM_JSON_OBJ obj) {
 
     uint8_t str_len = 0;
     while (json_str[str_len] != ',' && json_str[str_len] != '\0')
@@ -56,7 +56,7 @@ uint8_t parse_special_json_str(const char *json_str, struct json_obj *obj) {
     return str_len;
 }
 
-uint8_t parse_json_num(const char *json_str, struct json_obj *obj)
+uint8_t parse_json_num(const char *json_str, DM_JSON_OBJ obj)
 {
     uint8_t _type = 0;
     uint8_t str_len = 0;
@@ -79,7 +79,7 @@ uint8_t parse_json_num(const char *json_str, struct json_obj *obj)
     }
 }
 
-uint8_t parse_json_int(const char *json_str, struct json_obj *obj, uint8_t count)
+uint8_t parse_json_int(const char *json_str, DM_JSON_OBJ obj, uint8_t count)
 {
     char* sub_str = (char*)malloc((count + 1)*sizeof(char));
 
@@ -114,7 +114,7 @@ uint8_t parse_json_int(const char *json_str, struct json_obj *obj, uint8_t count
     return count;
 }
 
-uint8_t parse_json_float(const char *json_str, struct json_obj *obj, uint8_t count)
+uint8_t parse_json_float(const char *json_str, DM_JSON_OBJ obj, uint8_t count)
 {
     char* sub_str = (char*)malloc((count + 1)*sizeof(char));
 
@@ -147,14 +147,14 @@ uint8_t parse_json_float(const char *json_str, struct json_obj *obj, uint8_t cou
     return count;
 }
 
-uint8_t parse_json_arr(const char *json_str, struct json_obj *obj)
+uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ obj)
 {
 
 
     return 0;
 }
 
-uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
+uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ obj)
 {
     int inside_braces = -1;
     int key_start = -1;
@@ -291,39 +291,39 @@ uint8_t parse_json_obj(const char *json_str, struct json_obj *obj)
 
 
 
-uint8_t get_json_obj(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_obj(const char* obj_key, DM_JSON_OBJ obj)
 {
 	
 
 	return 0;
 }
 
-uint8_t get_json_int(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_int(const char* obj_key, DM_JSON_OBJ obj)
 {
 	return 0;
 }
 
-uint8_t get_json_float(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_float(const char* obj_key, DM_JSON_OBJ obj)
 {
 	return 0;
 }
 
-uint8_t get_json_bool(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_bool(const char* obj_key, DM_JSON_OBJ obj)
 {
 	return 0;
 }
 
-uint8_t get_json_null(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_null(const char* obj_key, DM_JSON_OBJ obj)
 {
 	return 0;
 }
 
-uint8_t get_json_arr(const char* obj_key, struct json_obj* obj)
+uint8_t get_json_arr(const char* obj_key, DM_JSON_OBJ obj)
 {
 	return 0;
 }
 
-uint8_t parse_json_key(const char *json_str, struct json_obj *obj) {
+uint8_t parse_json_key(const char *json_str, DM_JSON_OBJ obj) {
 
     uint8_t key_len = 0;
     while(json_str[key_len] != '\"')
