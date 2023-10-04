@@ -9,6 +9,7 @@ DM_JSON_OBJ json_malloc()
         printf("Memory Allocation failed.\n ");
         return NULL;
     }
+	initialize_json_obj(out);
 
     return out;
 }
@@ -597,7 +598,6 @@ void clear_json(DM_JSON_OBJ root)
 		free(root->str_value);
 	}
 	initialize_json_obj(root);
-	JSON_FREE(root);
 }
 
 

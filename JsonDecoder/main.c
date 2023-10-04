@@ -83,20 +83,34 @@ int main(int argc, char** argv)
 
 	char* temp_json_str = "{\"Test Float\":  123.35, \"Test Int\": 123}";
 
-	printf("%s\n", temp_json_str);
+	DM_JSON_OBJ test_json_root = JSON_MALLOC();
 
-	struct json_obj test_json_root;
+	// Test Parse number
+	/*int index = 0;
 
-	initialize_json_obj(&test_json_root);
+	while((temp_json_str[index] <= 48 || temp_json_str[index] >= 57))
+	{
+		++index;
+	}
 
-	uint8_t result = parse_json_obj(temp_json_str, &test_json_root);
+	printf("%d\n", index);
+	printf("%c\n", *(temp_json_str + index));
 
-	printf("Result is %d\n", result);
+	uint8_t digit_result = parse_json_num(temp_json_str + index, test_json_root);
 
-    if(test_json_root.child != NULL)
-    {
-        printf("root child key: %s\n", test_json_root.child->next->obj_key);
-    }
+	printf("Digit Result: %d\n", digit_result);
+
+	printf("%c\n", *(temp_json_str + index + digit_result));*/
+
+	// Test Parse object but only number in it
+	int obj_result = parse_json_obj(temp_json_str, test_json_root);
+
+	printf("Json_child key: %s\n", test_json_root->child->obj_key);
+	printf("Json_child value: %f\n", test_json_root->child->float_value);
+	printf("Json_second_child key: %s\n", test_json_root->child->next->obj_key);
+	printf("Json_second_child value: %d\n", test_json_root->child->next->int_value);
+
+
 
     return 0;
 }
