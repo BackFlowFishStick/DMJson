@@ -1,6 +1,7 @@
 #pragma once
-
-#define _CRT_SECURE_NO_WARNINGS
+#ifdef Windows
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -22,8 +23,8 @@
 #define JSON_LENGTH 2000;
 #define JSON_SPACE "  "
 
-#define JSON_MALLOC json_malloc
-#define JSON_FREE json_release
+#define DM_JSON_MALLOC json_malloc
+#define DM_JSON_FREE json_release
 
 #define DM_JSON_OBJ struct json_obj*
 

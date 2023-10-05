@@ -3,10 +3,18 @@
 uint8_t parse_json_str(const char *json_str, DM_JSON_OBJ obj)
 {
     uint8_t str_len = 0;
-    while(json_str[str_len] != '\"')
+    uint8_t quote_start = 0;
+  
+	while (quote_start < 2)
     {
+        if (json_str[str_len] == '\"')
+        {
+            ++quote_start;
+        }
         ++str_len;
+        //printf("%c\n", json_str[str_len]);
     }
+    str_len -= 2;
 
     obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
 
@@ -18,10 +26,10 @@ uint8_t parse_json_str(const char *json_str, DM_JSON_OBJ obj)
 
     memset(obj->str_value, '\0', str_len+ 1);
 
-    strncpy(obj->str_value, json_str, str_len);
+    strncpy(obj->str_value, json_str + 1, str_len);
     obj->json_type = JSON_TYPE_STR;
 
-    return str_len;
+    return str_len + 2;
 }
 
 uint8_t parse_special_json_str(const char *json_str, DM_JSON_OBJ obj) {
@@ -160,9 +168,11 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
     int value_start = -1;
 
     int str_len = (int)strlen(json_str);
+    uint8_t obj_result = 0;
 
-    for(int i = 0; i < str_len; ++i)
+	for(int i = 0; i < str_len; ++i)
     {
+        printf("%c\n", json_str[i]);
         if(*(json_str + i) == '\"')
         {
 	        if(key_start == -1)
@@ -171,27 +181,37 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 	        }
             else
             {
-                DM_JSON_OBJ child_obj = JSON_MALLOC();
-                int result = parse_json_str(json_str + i, child_obj);
-                if(result != 0)
+                if(value_start != -1)
                 {
-                    if (key_start != -1)
+                    DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+                    int result = parse_json_str(json_str + i, child_obj);
+                   
+                    if(result != 0)
                     {
-                        int key_result = parse_json_key((json_str + key_start), child_obj);
-                        if (key_result == 0)
+	                    if(key_start != -1)
+	                    {
+		                    if(connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
+		                    {
+                                return 0;
+		                    }
+	                    }
+                        else
                         {
-                            JSON_FREE(child_obj);
                             return 0;
                         }
-                        add_attribute(child_obj, root);
                     }
-                    else
-                    {
-                        return 0;
-                    }
+					// 将字符串下标推至json单位值的最后一个字符所在位置，当下次循环开始时，刚好可以检测下个字符是否为逗号                    
+                    i = i + result - 1;
                 }
-                i = i + result;
             }
+        }
+
+        else if(*(json_str + i) == ':')
+        {
+			if(value_start == -1)
+			{
+                value_start = 1;
+			}
         }
         else if(*(json_str + i) == '{')
         {
@@ -201,54 +221,58 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 	        }
             else
             {
-                DM_JSON_OBJ child_obj = JSON_MALLOC();
+                DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
 				int result = parse_json_obj((json_str + i), child_obj);
                 if(result != 0)
                 {
-                    // 判断在json object中是否有检测过key, 如果没有就有新的object，则代表格式错误
 	                if(key_start != -1)
 	                {
-                        int key_result = parse_json_key((json_str + key_start), child_obj);
-                        if(key_result == 0)
+                        if (connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
                         {
-                            JSON_FREE(child_obj);
                             return 0;
                         }
-                        add_attribute(child_obj, root);
-                        i = i + result;
 	                }
                     else
                     {
                         return 0;
                     }
                 }
+                i = i + result - 1;
             }
+        }
+        else if(*(json_str + i) == '}')
+        {
+            obj_result = i + 1;
         }
         else if((*(json_str + i) >= 48 && *(json_str + i) <= 57) || *(json_str + i) == '.')
         {
-            DM_JSON_OBJ child_obj = JSON_MALLOC();
+            DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
             int result = parse_json_num(json_str + i, child_obj);
 
             if(result != 0)
             {
 	            if(key_start != -1)
 	            {
-                    int key_result = parse_json_key((json_str + key_start), child_obj);
-                    if (key_result == 0)
+                    if(connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
                     {
-                        JSON_FREE(child_obj);
                         return 0;
                     }
-                    add_attribute(child_obj, root);
-                    key_start = -1;
-                    i = i + result;
-
 	            }
+                else
+                {
+                    return 0;
+                }
             }
+            i = i + result - 1;
+        }
+        else if(*(json_str + i) == ',')
+        {
+            key_start = -1;
+            value_start = -1;
         }
     }
 
-    return 0;
+    return obj_result;
 }
 
 
@@ -327,7 +351,7 @@ uint8_t connect_obj_to_root(const int result, const int key_start, const char* j
             int key_result = parse_json_key((json_str + key_start), child);
             if (key_result == 0)
             {
-                JSON_FREE(child);
+                DM_JSON_FREE(child);
                 return 0;
             }
             add_attribute(child, root);

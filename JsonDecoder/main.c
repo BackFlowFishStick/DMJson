@@ -79,11 +79,13 @@ int main(int argc, char** argv)
 	free(test_str);
 	*/
 
-	//,\"Test Bool\" : true,\"Test Float\" : 4.256780, \"Test Null\" : Null, \"Test String\" : \"This is just a piece of meaningless comment.\"
+	//,\"Test Bool\" : true,\"Test Float\" : 4.256780, \"Test Null\" : Null, \"Test String\" : \"This is just a piece of meaningless comment.\"  \"Test String\": \"This is just test parsing string.\"
 
-	char* temp_json_str = "{\"Test Float\":  123.35, \"Test Int\": 123}";
+	const char* temp_json_str = "{\"Test Float\":  123.35, \"Test Int\": 12345, \"Test String\": \"This is just test parsing string.\" }\0";
+	printf("Actual string size: %d\n", (int)strlen(temp_json_str));
 
-	DM_JSON_OBJ test_json_root = JSON_MALLOC();
+	DM_JSON_OBJ test_json_root = DM_JSON_MALLOC();
+	test_json_root->json_type = JSON_TYPE_OBJ;
 
 	// Test Parse number
 	/*int index = 0;
@@ -109,8 +111,19 @@ int main(int argc, char** argv)
 	printf("Json_child value: %f\n", test_json_root->child->float_value);
 	printf("Json_second_child key: %s\n", test_json_root->child->next->obj_key);
 	printf("Json_second_child value: %d\n", test_json_root->child->next->int_value);
+	printf("Json_Third_child key: %s\n", test_json_root->child->next->next->obj_key);
+	printf("Json_Third child value: %s\n", test_json_root->child->next->next->str_value);
 
+	int size_of_json = get_str_size_of_json(test_json_root);
+	printf("Required size of json: %d\n", size_of_json);
+	char* temp_json = (char*)malloc(sizeof(char) * size_of_json);
+	memset(temp_json, '\0', size_of_json);
 
+	generate_json_obj_str(test_json_root, temp_json);
+	print_json(temp_json);
+
+	DM_JSON_FREE(test_json_root);
+	free(temp_json);
 
     return 0;
 }

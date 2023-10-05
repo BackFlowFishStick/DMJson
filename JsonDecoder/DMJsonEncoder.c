@@ -203,7 +203,7 @@ int get_str_size_of_json(const DM_JSON_OBJ root)
 		case JSON_TYPE_STR:
 			len = (int)strlen(root->str_value);
 			break;
-	case JSON_TYPE_ARR:
+		case JSON_TYPE_ARR:
 			if (root->child != NULL) 
 			{
 				len = get_str_size_of_json(root->child) + 3;
@@ -214,7 +214,14 @@ int get_str_size_of_json(const DM_JSON_OBJ root)
 			break;
 	}
 	// Quote mark + colon + one space
-	len = len + (int)strlen(root->obj_key) + 4;
+	if(root->obj_key != NULL)
+	{
+		len = len + (int)strlen(root->obj_key) + 4;
+	}
+	else
+	{
+		len = len + 4;
+	}
 
 	if (root->next != NULL) 
 	{
@@ -301,7 +308,11 @@ void print_space(int level)
 void generate_json_obj_str(DM_JSON_OBJ obj, char* json_str)
 {
 	if (obj == NULL) return;
-
+	if(obj->obj_key == NULL)
+	{
+		obj->obj_key = (char*)malloc(sizeof(char));
+		memset(obj->obj_key, '\0', 1);
+	}
 	int keyLength = 0;
 	if (obj->obj_key == NULL)
 	{
