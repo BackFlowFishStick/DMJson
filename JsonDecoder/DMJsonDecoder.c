@@ -19,7 +19,7 @@ uint8_t parse_json_str(const char *json_str, DM_JSON_OBJ obj)
     obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
 
     if(obj->str_value == NULL)
-    {
+    { 
         return 0;
     }
 
@@ -35,9 +35,13 @@ uint8_t parse_json_str(const char *json_str, DM_JSON_OBJ obj)
 uint8_t parse_special_json_str(const char *json_str, DM_JSON_OBJ obj) {
 
     uint8_t str_len = 0;
-    while (json_str[str_len] != ',' && json_str[str_len] != '\0')
+    while (json_str[str_len] == 't' || json_str[str_len] == 'r' || json_str[str_len] == 'u' 
+        || json_str[str_len] == 'e' || json_str[str_len] == 'f'|| json_str[str_len] == 'a' || 
+        json_str[str_len] == 'l' || json_str[str_len] == 's' || json_str[str_len] == 'e' 
+        || json_str[str_len] == 'N' || json_str[str_len] == 'u' || json_str[str_len] == 'l')
     {
         ++str_len;
+        printf("%c\n", json_str[str_len]);
     }
 
     obj->str_value = (char*)malloc((str_len + 1) * sizeof(char));
@@ -163,6 +167,7 @@ uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ obj)
 
 uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 {
+    root->json_type = JSON_TYPE_OBJ;
     int inside_bracket = -1;
     int key_start = -1;
     int value_start = -1;
@@ -192,11 +197,13 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 	                    {
 		                    if(connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
 		                    {
+                                DM_JSON_FREE(child_obj);
                                 return 0;
 		                    }
 	                    }
                         else
                         {
+                            DM_JSON_FREE(child_obj);
                             return 0;
                         }
                     }
@@ -229,11 +236,13 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 	                {
                         if (connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
                         {
+                            DM_JSON_FREE(child_obj);
                             return 0;
                         }
 	                }
                     else
                     {
+                        DM_JSON_FREE(child_obj);
                         return 0;
                     }
                 }
@@ -255,15 +264,43 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
 	            {
                     if(connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
                     {
+                        DM_JSON_FREE(child_obj);
                         return 0;
                     }
 	            }
                 else
                 {
+                    DM_JSON_FREE(child_obj);
                     return 0;
                 }
             }
             i = i + result - 1;
+        }
+        else if((*(json_str + i) == 't') || (*(json_str + i) == 'f') || (*(json_str + i) == 'N'))
+        {
+            if(value_start != -1)
+            {
+                DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+                int result = parse_special_json_str(json_str + i, child_obj);
+
+                if (result != 0)
+                {
+                    if (key_start != -1)
+                    {
+                        if (connect_obj_to_root(result, key_start, json_str, root, child_obj) == 0)
+                        {
+                            DM_JSON_FREE(child_obj);
+                            return 0;
+                        }
+                    }
+                    else
+                    {
+                        DM_JSON_FREE(child_obj);
+                        return 0;
+                    }
+                }
+                i = i + result - 1;
+            }
         }
         else if(*(json_str + i) == ',')
         {
