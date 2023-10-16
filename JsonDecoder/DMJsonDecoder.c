@@ -158,11 +158,48 @@ uint8_t parse_json_float(const char *json_str, DM_JSON_OBJ obj, uint8_t count)
     return count;
 }
 
-uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ obj)
+uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ root)
 {
+    root->json_type = JSON_TYPE_ARR;
+    int inside_arr = -1;
+    int inside_bracket = -1;
+    int value_start = -1;
 
+    int str_len = (int)strlen(json_str);
+    uint8_t obj_result = 0;
 
-    return 0;
+    for (int i = 0; i < str_len; ++i)
+    {
+    	if (*(json_str + i) == ':')
+		{
+            if (value_start == -1)
+            {
+                value_start = 1;
+            }
+		}
+        else if (*(json_str + i) == '{')
+        {
+           
+        }
+        else if (*(json_str + i) == '}')
+        {
+            
+        }
+        else if ((*(json_str + i) >= 48 && *(json_str + i) <= 57) || *(json_str + i) == '.')
+        {
+            
+        }
+        else if ((*(json_str + i) == 't') || (*(json_str + i) == 'f') || (*(json_str + i) == 'N'))
+        {
+            
+        }
+        else if (*(json_str + i) == ',')
+        {
+            
+        }
+    }
+
+    return obj_result;
 }
 
 uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
