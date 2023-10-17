@@ -163,18 +163,32 @@ uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ root)
     root->json_type = JSON_TYPE_ARR;
     int inside_arr = -1;
     int inside_bracket = -1;
-    int value_start = -1;
 
     int str_len = (int)strlen(json_str);
     uint8_t obj_result = 0;
 
     for (int i = 0; i < str_len; ++i)
     {
-    	if (*(json_str + i) == ':')
+    	if (*(json_str + i) == '[')
 		{
-            if (value_start == -1)
+			if(inside_arr == -1)
+			{
+                inside_arr = 1;
+			}
+            else
             {
-                value_start = 1;
+
+                DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+                int result = parse_json_obj((json_str + i), child_obj);
+                if (result != 0)
+                {
+                    add_attribute(child_obj, root);
+                }
+                else
+                {
+                    DM_JSON_FREE(child_obj);
+                }
+                i = i + result - 1;
             }
 		}
         else if (*(json_str + i) == '{')
@@ -433,6 +447,11 @@ uint8_t connect_obj_to_root(const int result, const int key_start, const char* j
         }
     }
     return 0;
+}
+
+uint8_t create_array(DM_JSON_OBJ obj, DM_JSON_OBJ* arr)
+{
+    return 1;
 }
 
 

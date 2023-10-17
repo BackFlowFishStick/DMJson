@@ -12,6 +12,7 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root);
 uint8_t parse_json_key(const char* json_str, DM_JSON_OBJ root);
 // Helper methods
 uint8_t connect_obj_to_root(const int result, const int key_start, const char* json_str, DM_JSON_OBJ root, DM_JSON_OBJ child);
+uint8_t create_array(DM_JSON_OBJ obj, DM_JSON_OBJ* arr);
 // Searching methods 
 uint8_t get_json_obj(const char* obj_key, DM_JSON_OBJ obj);
 uint8_t get_json_int(const char* obj_key, DM_JSON_OBJ obj);
