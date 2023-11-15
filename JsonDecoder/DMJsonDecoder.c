@@ -179,7 +179,7 @@ uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ root)
             {
 
                 DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
-                int result = parse_json_obj((json_str + i), child_obj);
+                int result = parse_json_arr((json_str + i), child_obj);
                 if (result != 0)
                 {
                     add_attribute(child_obj, root);
@@ -193,23 +193,59 @@ uint8_t parse_json_arr(const char *json_str, DM_JSON_OBJ root)
 		}
         else if (*(json_str + i) == '{')
         {
-           
+            DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+            int result = parse_json_obj((json_str + i), child_obj);
+
+            if(result != 0)
+            {
+                add_attribute(child_obj, root);
+            }
+            else
+            {
+                DM_JSON_FREE(child_obj);
+            }
+            i = i + result - 1;
         }
-        else if (*(json_str + i) == '}')
-        {
-            
-        }
+        
         else if ((*(json_str + i) >= 48 && *(json_str + i) <= 57) || *(json_str + i) == '.')
         {
-            
+            DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+            int result = parse_json_num((json_str + i), child_obj);
+
+            if(result != 0)
+            {
+                add_attribute(child_obj, root);
+            }
+            else
+            {
+                DM_JSON_FREE(child_obj);
+            }
+            i = i + result - 1;
         }
         else if ((*(json_str + i) == 't') || (*(json_str + i) == 'f') || (*(json_str + i) == 'N'))
         {
-            
+            DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
+            int result = parse_special_json_str(json_str + i, child_obj);
+
+            if (result != 0)
+            {
+                add_attribute(child_obj, root);
+            }
+            else
+            {
+                DM_JSON_FREE(child_obj);
+            }
+            i = i + result - 1;
+
         }
         else if (*(json_str + i) == ',')
         {
             
+        }
+        else if (*(json_str + i) == ']')
+        {
+            obj_result = i + 1;
+            return obj_result;
         }
     }
 
@@ -300,10 +336,6 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
                 i = i + result - 1;
             }
         }
-        else if(*(json_str + i) == '}')
-        {
-            obj_result = i + 1;
-        }
         else if((*(json_str + i) >= 48 && *(json_str + i) <= 57) || *(json_str + i) == '.')
         {
             DM_JSON_OBJ child_obj = DM_JSON_MALLOC();
@@ -357,6 +389,11 @@ uint8_t parse_json_obj(const char *json_str, DM_JSON_OBJ root)
         {
             key_start = -1;
             value_start = -1;
+        }
+        else if (*(json_str + i) == '}')
+        {
+            obj_result = i + 1;
+            return obj_result;
         }
     }
 

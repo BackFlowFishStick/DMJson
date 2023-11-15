@@ -106,6 +106,7 @@ int main(int argc, char** argv)
 
 	// Test Parse object but only number in it
 	int obj_result = parse_json_obj(temp_json_str, test_json_root);
+	printf("This is Obj result %d\n", obj_result);
 
 	int size_of_json = get_str_size_of_json(test_json_root);
 	printf("Required size of json: %d\n", size_of_json);
